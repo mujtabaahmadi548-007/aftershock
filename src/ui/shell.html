@@ -1,0 +1,110 @@
+<div id="app" class="app" data-view="simulate">
+  <header class="top">
+    <div class="brand">
+      <span class="mark">AFTERSHOCK</span>
+      <span class="sub">Consequence engine</span>
+    </div>
+    <div class="scn-title">
+      <span class="eyebrow">Hypothetical <span id="runState" class="runstate">Paused</span></span>
+      <h1 id="scnName">Loading</h1>
+      <p id="scnMeta" class="meta"></p>
+    </div>
+    <nav class="views" role="tablist" aria-label="Views">
+      <button type="button" role="tab" data-view="simulate" aria-selected="true">Simulate</button>
+      <button type="button" role="tab" data-view="compare" aria-selected="false">Compare futures</button>
+      <button type="button" role="tab" data-view="model" aria-selected="false">Model &amp; assumptions</button>
+    </nav>
+    <div class="integrity" aria-label="How to read results">
+      <button type="button" class="ik ik-E" data-open-model title="Direction documented in research or history; strength still assumed"><i></i>Established relationship</button>
+      <button type="button" class="ik ik-A" data-open-model title="A number or mechanism chosen by the model's authors"><i></i>Model assumption</button>
+      <button type="button" class="ik ik-est" data-open-model title="Computed through mostly established links; not observed"><i></i>Estimated consequence</button>
+      <button type="button" class="ik ik-S" data-open-model title="Relies on assumed or contested links, or only the upper sensitivity bound"><i></i>Speculative possibility</button>
+    </div>
+  </header>
+
+  <aside class="left" id="left" aria-label="Scenario and parameters">
+    <div id="leftSim">
+      <section class="block">
+        <h2>Choose a hypothetical</h2>
+        <ul id="scnList" class="scnlist"></ul>
+      </section>
+      <section class="block">
+        <h2>Configure</h2>
+        <form id="paramForm" class="params" onsubmit="return false"></form>
+        <button id="launch" class="primary" type="button">Launch simulation</button>
+        <p class="note" id="runStat"></p>
+      </section>
+    </div>
+    <section id="compareCfg" class="block" hidden></section>
+  </aside>
+
+  <main class="stage" id="stage">
+    <div class="pane pane-globe">
+      <div class="pane-head">
+        <span class="pane-title">Impact map</span>
+        <label class="sr" for="layerSel">Map layer</label>
+        <select id="layerSel"></select>
+        <div class="legend" id="globeLegend"></div>
+      </div>
+      <div class="globes">
+        <canvas id="globeA" aria-label="Globe showing regional impact. Drag to rotate, scroll to zoom, click a region to inspect it."></canvas>
+        <canvas id="globeB" hidden aria-label="Globe for alternative future B"></canvas>
+        <div class="globe-tags" id="globeTags"></div>
+      </div>
+      <p class="pane-note">Ten macro-regions. Country borders are for orientation only. Diamonds mark schematic sites.</p>
+    </div>
+    <div class="pane pane-net">
+      <div class="pane-head">
+        <span class="pane-title">Causal network</span>
+        <span class="scope" id="netScope">World</span>
+        <div class="net-legend">
+          <span><i class="ln ln-E"></i>Established</span>
+          <span><i class="ln ln-A"></i>Assumption</span>
+          <span><i class="ln ln-S"></i>Speculative</span>
+          <span><i class="dot harm"></i>Harm flowing</span>
+          <span><i class="dot good"></i>Benefit flowing</span>
+        </div>
+      </div>
+      <div class="net-wrap"><canvas id="net" aria-label="Causal network. Click a variable or link to inspect it."></canvas></div>
+    </div>
+  </main>
+
+  <aside class="right" id="right" aria-label="Indicators and inspector">
+    <div class="tabs" id="rightTabs" role="tablist">
+      <button type="button" role="tab" data-tab="kpi" aria-selected="true">Indicators</button>
+      <button type="button" role="tab" data-tab="inspect" aria-selected="false">Inspector</button>
+      <button type="button" role="tab" data-tab="events" aria-selected="false">Consequences</button>
+    </div>
+    <div class="tabbody" id="tabKpi"></div>
+    <div class="tabbody" id="tabInspect" hidden></div>
+    <div class="tabbody" id="tabEvents" hidden></div>
+    <div class="tabbody" id="tabCompare" hidden></div>
+  </aside>
+
+  <footer class="dock">
+    <div class="transport" role="group" aria-label="Time controls">
+      <button type="button" id="tReset" class="tb" aria-label="Back to onset"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 5v14M19 6l-10 6 10 6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+      <button type="button" id="tRew" class="tb" aria-label="Rewind"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M11 6l-8 6 8 6zM20 6l-8 6 8 6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></button>
+      <button type="button" id="tBack" class="tb" aria-label="Back one week"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      <button type="button" id="tPlay" class="tb play" aria-label="Play"></button>
+      <button type="button" id="tFwd" class="tb" aria-label="Forward one week"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      <div class="speeds" role="group" aria-label="Playback speed">
+        <button type="button" data-i="0" aria-pressed="false">1×</button>
+        <button type="button" data-i="1" aria-pressed="true">4×</button>
+        <button type="button" data-i="2" aria-pressed="false">16×</button>
+        <button type="button" data-i="3" aria-pressed="false">64×</button>
+      </div>
+    </div>
+    <div class="clock" aria-live="off">
+      <span class="clock-w mono" id="clockWeek">T+000</span>
+      <span class="clock-unit">weeks</span>
+      <span class="clock-s" id="clockSpan">onset</span>
+    </div>
+    <div class="tl-wrap">
+      <canvas id="timeline" aria-label="Timeline of shock intensity with consequence markers. Drag to scrub through time."></canvas>
+    </div>
+  </footer>
+
+  <div id="modelView" class="model-view" hidden></div>
+  <div id="tip" class="tip" role="tooltip" hidden></div>
+</div>
